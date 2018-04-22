@@ -25,7 +25,44 @@ var FlappyWorm = function(Tweener, Physics, Renderer, Dot, width, height) {
 		Ready : "Ready",
 	};
 
+	var scoreDiv = document.createElement("div");
+	document.body.appendChild(scoreDiv);
+	scoreDiv.style.position = "fixed";
+	scoreDiv.innerHTML = "Score: 0";
+	scoreDiv.style.top = "20px";
+	scoreDiv.style.right = "100px";
+	scoreDiv.style.fontFamily = "monospace";
+	scoreDiv.style.fontSize = "30px";
+	scoreDiv.width = "200px";
+	scoreDiv.style.display = "inline-block";
+
+	var bestDiv = document.createElement("div");
+	document.body.appendChild(bestDiv);
+	bestDiv.style.position = "fixed";
+	bestDiv.innerHTML = "Best: 0";
+	bestDiv.style.top = "60px";
+	bestDiv.style.right = "100px";
+	bestDiv.style.fontFamily = "monospace";
+	bestDiv.style.fontSize = "30px";
+	bestDiv.width = "200px";
+	bestDiv.style.display = "inline-block";
+
+
+	var introText = document.createElement("div");
+	document.body.appendChild(introText);
+	introText.style.position = "fixed";
+	introText.style.textAlign = "center";
+	introText.innerHTML = "Flappy Word Worm Bird<br>PRESS SPACE";
+	introText.style.top = "100px";
+	introText.style.right = "100px";
+	introText.style.fontFamily = "monospace";
+	introText.style.fontSize = "50px";
+	introText.width = "200px";
+	introText.style.display = "inline-block";
+
 	var state = LocalState.Ready;
+	var score = 0;
+	var best = 0;
 	
 	var head = Dot.create(
 		vector2(200, height/2.5),
@@ -144,6 +181,13 @@ var FlappyWorm = function(Tweener, Physics, Renderer, Dot, width, height) {
 				},
 			);
 		}
+		var scoreDelta = selected.length*selected.length;
+		score += scoreDelta;
+		scoreDiv.innerHTML = "Score: " + score;
+		if (score > best) {
+			bestDiv.innerHTML = "Score: " + score;
+			best = score;
+		}
 		selected = [];
 		subWordTrie = WordTrie;
 	}
@@ -225,6 +269,18 @@ var FlappyWorm = function(Tweener, Physics, Renderer, Dot, width, height) {
 		}
 	}
 
+	function setState(newState) {
+		if (newState == LocalState.Dead) {
+			for (var i = 0; i < selected.length; i++) {
+				selected[i].color = Color.NCS_RED;
+			}
+			score = 0;
+			scoreDiv.innerHTML = "Score: 0";
+		}
+		state = newState;
+		introText.style.display = "none";
+	}
+
 	var startData = JSON.parse(JSON.stringify(data));
 
 	return {
@@ -251,9 +307,9 @@ var FlappyWorm = function(Tweener, Physics, Renderer, Dot, width, height) {
 					if (state == LocalState.Playing) {
 						head.velocity =  HEAD_VELOCITY;
 					} else if (state == LocalState.Ready) {
-						state = LocalState.Playing;
+						setState(LocalState.Playing);
 					} else if (state == LocalState.Dead) {
-						state = LocalState.Ready;
+						setState(LocalState.Ready);
 						resetLetters();
 						Dot.transition(dots, startData);
 					}
@@ -268,7 +324,7 @@ var FlappyWorm = function(Tweener, Physics, Renderer, Dot, width, height) {
 
 				for (var i = 0; i < ground.length; i++) {
 					if (Dot.intersects(ground[i], head)) {
-						state = LocalState.Dead;
+						setState(LocalState.Dead);
 						break;
 					}
 				}
@@ -297,7 +353,7 @@ var FlappyWorm = function(Tweener, Physics, Renderer, Dot, width, height) {
 							function(dot) {
 								letter = letter.toLowerCase();
 								if (!subWordTrie[letter]) {
-									state = LocalState.Dead;
+									setState(LocalState.Dead);
 									console.log("No word begins with:", getCurrentWord());
 								} else {
 									subWordTrie = subWordTrie[letter];
