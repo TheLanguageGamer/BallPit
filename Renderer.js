@@ -7,6 +7,14 @@ function drawDot(ctx, dot) {
 		ctx.fillStyle = dot.color.style;
 		ctx.fill();
 		ctx.closePath();
+		if (dot.letter) {
+			ctx.font = Math.round(dot.radius*1.6)+"px monospace";
+			ctx.fillStyle = Color.BLACK.style;
+			ctx.fillText(dot.letter,
+				dot.position.x-dot.radius*0.5,
+				dot.position.y+dot.radius*0.5
+			);
+		}
 	}
 }
 
@@ -20,9 +28,16 @@ var Renderer = function() {
 
 	var ctx = canvas.getContext("2d")
 
+	var backgroundColor = null;
+
 	return {
 		update(delta, dots) {
-			ctx.clearRect(0, 0, cvWidth, cvHeight);
+			if (backgroundColor) {
+				ctx.fillStyle = backgroundColor.style;
+				ctx.fillRect(0, 0, cvWidth, cvHeight);
+			} else {
+				ctx.clearRect(0, 0, cvWidth, cvHeight);
+			}
 
 			for (var i = 0; i < dots.length; ++i) {
 				drawDot(ctx, dots[i]);
@@ -30,6 +45,9 @@ var Renderer = function() {
 		},
 		getCanvas() {
 			return canvas;
+		},
+		setBackgroundColor(color) {
+			backgroundColor = color;
 		},
 	};
 };

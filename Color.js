@@ -84,6 +84,10 @@ var Color = (function() {
 		},
 		WHITE : fromRGBA(255, 255, 255, 255),
 		BLACK : fromRGBA(0, 0, 0, 255),
+		NCS_YELLOW : fromHEX("#FFD300"),
+		NCS_GREEN : fromHEX("#009F6B"),
+		NCS_BLUE : fromHEX("#0087BD"),
+		NCS_RED : fromHEX("#C40233"),
 		randomize : function(dots, combination) {
 			for (var i = 0; i < dots.length; i++) {
 				var idx = Math.floor(Math.random()*combination.length);

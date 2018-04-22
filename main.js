@@ -10,16 +10,11 @@ window.onload = function() {
 	var Collider = window.Collider(cvWidth, cvHeight);
 	var Dot = window.Dot(Tweener);
 	var State = window.State(Tweener, Physics, Dot);
+	var FlappyWorm = window.FlappyWorm(Tweener, Physics, Renderer, Dot, cvWidth, cvHeight);
 
 	var dots = []; //JSON.parse(JSON.stringify(Data.Doughnut));
 	Color.randomize(dots, Color.Combination.Painterly);
-	// Dot.center(dots, {
-	// 	min : vector2(0, 0),
-	// 	max : vector2(cvWidth, cvHeight),
-	// });
-	// console.log(JSON.stringify(dots));
-	//State.setState(State.fromData(Data.Square), dots);
-	State.setState(State.DataChaosCycle, dots);
+	State.setState(FlappyWorm, dots);
 
 	var keyDowns = {};
 	document.addEventListener("keydown", function(e) {
@@ -35,21 +30,18 @@ window.onload = function() {
 			e.pageY - canvas.offsetTop,
 		);
 		var dot = Collider.forPosition(dots, position);
-		if (dot) {
-			console.log("Dot!");
-			dot.color = Color.BLACK;
-		}
 	}, false);
 
 	var last = 0;
 	function update(now) {
 		var delta = now - last;
 		last = now;
+		FPSCounter.update(delta);
 
 		State.input(keyDowns, dots);
 		keyDowns = {};
 
-		FPSCounter.update(delta);
+		State.update(delta, dots);
 		Tweener.update(delta, dots);
 		Physics.update(delta, dots);
 		Renderer.update(delta, dots);

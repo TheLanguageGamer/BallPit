@@ -44,7 +44,7 @@ var Dot = function(Tweener) {
 				destination : position,
 			};
 		},
-		intersects : function(a, b, buffer) {
+		intersects : function(a, b, buffer = 0.0) {
 			var x = a.position.x-b.position.x;
 			var y = a.position.y-b.position.y;
 			var distance = Math.sqrt(x*x+y*y);
@@ -140,7 +140,47 @@ var Dot = function(Tweener) {
 					Tweener.circle(position, radius),
 				);
 			}
-		}
+		},
+		transition : function(dots, data) {
+			for (var i = 0; i < dots.length; i++) {
+				var dot = dots[i];
+				dot.velocity = data[i].velocity;
+				if (i >= data.length) {
+					dot.tween = Tweener.create(
+						dot,
+						false,
+						500.0,
+						0,
+						null,
+						function(dot) {
+							dot.visible = false;
+						},
+					);
+				} else {
+					dot.visible = true;
+					dot.tween = Tweener.create(
+						dot,
+						false,
+						500.0,
+						data[i].radius,
+						Tweener.line(dot.position, data[i].position),
+					);
+				}
+			}
+			for (var i = dots.length; i < data.length; i++) {
+				var dot = JSON.parse(JSON.stringify(data[i]));
+				dot.velocity = data[i].velocity;
+				var radiusTarget = dot.radius;
+				dot.radius = 0;
+				dot.tween = Tweener.create(
+					dot,
+					false,
+					500.0,
+					radiusTarget,
+				);
+				dots.push(dot);
+			}
+		},
 	};
 };
 

@@ -57,42 +57,7 @@ var State = function(Tweener, Physics, Dot) {
 		return {
 			initialize(dots) {
 				Physics.setEnabled(false);
-				for (var i = 0; i < dots.length; i++) {
-					var dot = dots[i];
-					if (i >= data.length) {
-						dot.tween = Tweener.create(
-							dot,
-							false,
-							500.0,
-							0,
-							null,
-							function(dot) {
-								dot.visible = false;
-							},
-						);
-					} else {
-						dot.visible = true;
-						dot.tween = Tweener.create(
-							dot,
-							false,
-							500.0,
-							data[i].radius,
-							Tweener.line(dot.position, data[i].position),
-						);
-					}
-				}
-				for (var i = dots.length; i < data.length; i++) {
-					var dot = JSON.parse(JSON.stringify(data[i]));
-					var radiusTarget = dot.radius;
-					dot.radius = 0;
-					dot.tween = Tweener.create(
-						dot,
-						false,
-						500.0,
-						radiusTarget,
-					);
-					dots.push(dot);
-				}
+				Dot.transition(dots, data);
 			},
 			input(keyDowns, dots) {
 				inputHandler(keyDowns, dots);
@@ -105,6 +70,11 @@ var State = function(Tweener, Physics, Dot) {
 		input(keyDowns, dots) {
 			if (current && current.input) {
 				current.input(keyDowns, dots);
+			}
+		},
+		update(delta, dots) {
+			if (current && current.update) {
+				current.update(delta, dots);
 			}
 		},
 		DataChaosCycle : (function() {

@@ -13,12 +13,19 @@ var Physics = function(width, height) {
 	var absoluteMin = vector2(0, 0);
 	var absoluteMax = vector2(width, height);
 
-	function updateVelocity(dot, delta) {
+	function updatePosition(dot, delta) {
 		var position = dot.position;
 		velocity = dot.velocity;
 		dot.position = vector2(
 			position.x + delta*velocity.x,
 			position.y + delta*velocity.y
+		);
+	}
+
+	function updateVelocity(dot, delta, acceleration) {
+		dot.velocity = vector2(
+			dot.velocity.x + delta*acceleration.x,
+			dot.velocity.y + delta*acceleration.y,
 		);
 	}
 
@@ -64,7 +71,7 @@ var Physics = function(width, height) {
 			}
 			for (var i = 0; i < dots.length; ++i) {
 				var dot = dots[i];
-				updateVelocity(dot, delta);
+				updatePosition(dot, delta);
 				collideWithWalls(dot);
 				applyGravity(dot, delta);
 				dot.position = clamp(dot.position, absoluteMin, absoluteMax, dot.radius);
@@ -73,5 +80,7 @@ var Physics = function(width, height) {
 		setEnabled(value) { enabled = value; },
 		setGravity(value) { gravity = value; },
 		setDampening(value) { dampening = value; },
+		updatePosition : updatePosition,
+		updateVelocity : updateVelocity,
 	};
 };
