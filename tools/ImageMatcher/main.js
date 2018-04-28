@@ -1,4 +1,6 @@
 
+var Dot = window.Dot()
+
 function imageDataToPixels(imageData, width, height) {
 	var pixels = []
 	var row = [];
