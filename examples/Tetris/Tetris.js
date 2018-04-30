@@ -89,7 +89,6 @@ var Tetris = function(Game, width, height) {
 		input(keyDowns, dots) {
 			for (var key in keyDowns) {
 				var code = keyDowns[key].code;
-				console.log("input", key, code);
 				if (code == "ArrowLeft") {
 					if (grid.canMoveSubgrid(0, -1, piece)) {
 						piece = grid.moveSubgrid(0, -1, piece);

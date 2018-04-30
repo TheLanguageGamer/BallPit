@@ -8,12 +8,13 @@ function drawDot(ctx, dot) {
 		ctx.fill();
 		ctx.closePath();
 		if (dot.letter) {
-			ctx.font = Math.round(dot.radius*1.6)+"px monospace";
+			var l = dot.letter.length;
+			var size = dot.radius*1.6/l;
+			var x = dot.position.x-dot.radius*0.5;
+			var y = dot.position.y+dot.radius*(1.0/(2*l));
+			ctx.font = Math.round(size)+"px monospace";
 			ctx.fillStyle = Color.BLACK.style;
-			ctx.fillText(dot.letter,
-				dot.position.x-dot.radius*0.5,
-				dot.position.y+dot.radius*0.5
-			);
+			ctx.fillText(dot.letter, x, y);
 		}
 	}
 }

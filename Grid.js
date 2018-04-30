@@ -63,8 +63,13 @@ function Grid(Game,
 		}
 	}
 
+	var stateStyleCallback = null;
 	function setStateForCell(cell, newState) {
-		cell.dot.color = colorCombination[newState];
+		if (stateStyleCallback) {
+			stateStyleCallback(cell, newState);
+		} else {
+			cell.dot.color = colorCombination[newState];
+		}
 		//cell.dot.visible = (newState > 0);
 		cell.state = newState;
 	}
@@ -97,9 +102,47 @@ function Grid(Game,
 		}
 	}
 
+	function getCount(state) {
+		var count = 0;
+		for (var j = 0; j < rowCount; j++) {
+			for (var i = 0; i < colCount; i++) {
+				var cell = cells[j][i];
+				if (cell.state == state) {
+					count += 1;
+				}
+			}
+		}
+		return count;
+	}
+
 	return {
 		matchShapeAt : matchShapeAt,
 		setShapeAt : setShapeAt,
+		getCount : getCount,
+		setStateForCell : setStateForCell,
+		addBackground() {
+			data = [];
+			var margin = -0.05*cellSize;
+			var radius = (cellSize - margin)/2.0;
+			for (var j = 0; j < rowCount; j++) {
+				for (var i = 0; i < colCount; i++) {
+					var position = positionForCoordinate(i, j);
+					var bgDot = Game.Dot.create(
+						position,
+						radius,
+						colorCombination[0],
+					);
+					var cell = cells[j][i];
+					cell.bgDot = bgDot;
+					data.push(cell.bgDot);
+				}
+			}
+			for (var j = 0; j < rowCount; j++) {
+				for (var i = 0; i < colCount; i++) {
+					data.push(cells[j][i].dot);
+				}
+			}
+		},
 		setCells(cellStates) {
 			for (var j = 0; j < rowCount; j++) {
 				for (var i = 0; i < colCount; i++) {
@@ -268,12 +311,54 @@ function Grid(Game,
 			}
 			return true;
 		},
-		initialize(dots) {
-			Game.Dot.transition(dots, data);
+		addRandom(state) {
+			var count = getCount(0);
+			var c = 0;
+			var targetC = Math.floor(Math.random()*count);
+			console.log("addRandom", count, targetC);
 			for (var j = 0; j < rowCount; j++) {
 				for (var i = 0; i < colCount; i++) {
 					var cell = cells[j][i];
-					cell.dot = dots[j*colCount + i];
+					if (cell.state == 0) {
+						if (c == targetC) {
+							setStateForCell(cell, state);
+							return;
+						}
+						c += 1;
+					}
+				}
+			}
+		},
+		getCell(j, i) {
+			if (i < 0
+				|| j < 0
+				|| i >= colCount
+				|| j >= rowCount) {
+				return null;
+			}
+			return cells[j][i];
+		},
+		setStateStyleCallback(callback) {
+			stateStyleCallback = callback;
+		},
+		initialize(dots) {
+			Game.Dot.transition(dots, data);
+			// for (var c = 0; c < data.length; c++) {
+			// 	console.log("data", c, data[c].position, dots[c].position);
+			// }
+			//console.log("initialize", data.length, dots.length);
+			for (var j = 0; j < rowCount; j++) {
+				for (var i = 0; i < colCount; i++) {
+					var cell = cells[j][i];
+					var offset = 0;
+					if (cell.bgDot) {
+						cell.bgDot = dots[j*colCount + i];
+						//cell.bgDot.visible = false;
+						offset = rowCount*colCount;
+					}
+					var idx = offset + j*colCount + i;
+					cell.dot = dots[idx];
+					//console.log("dot index", offset, idx, dots[idx]);
 				}
 			}
 		}
