@@ -64,11 +64,13 @@ function Grid(Game,
 	}
 
 	var stateStyleCallback = null;
-	function setStateForCell(cell, newState) {
-		if (stateStyleCallback) {
-			stateStyleCallback(cell, newState);
-		} else {
-			cell.dot.color = colorCombination[newState];
+	function setStateForCell(cell, newState, setStyle = true) {
+		if (setStyle) {
+			if (stateStyleCallback) {
+				stateStyleCallback(cell, newState);
+			} else {
+				cell.dot.color = colorCombination[newState];
+			}
 		}
 		//cell.dot.visible = (newState > 0);
 		cell.state = newState;
@@ -120,6 +122,10 @@ function Grid(Game,
 		setShapeAt : setShapeAt,
 		getCount : getCount,
 		setStateForCell : setStateForCell,
+		positionForCoordinate : positionForCoordinate,
+		getRadius() {
+			return radius;
+		},
 		addBackground() {
 			data = [];
 			var margin = -0.05*cellSize;
@@ -263,7 +269,7 @@ function Grid(Game,
 			}
 			return true;
 		},
-		moveSubgrid(deltaJ, deltaI, subgrid) {
+		moveSubgrid(deltaJ, deltaI, subgrid, setStyle = true) {
 			var newStates = {};
 			for (var key in subgrid.states) {
 				var coordinate = JSON.parse("["+key+"]");
@@ -273,7 +279,7 @@ function Grid(Game,
 				var newI = i + deltaI;
 				var newState = subgrid.states[key];
 				var newCell = cells[newJ][newI];
-				setStateForCell(newCell, newState);
+				setStateForCell(newCell, newState, false);
 				newStates[[newJ, newI]] = newState;
 			}
 			for (var key in subgrid.states) {
@@ -281,7 +287,7 @@ function Grid(Game,
 					var coordinate = JSON.parse("["+key+"]");
 					var j = coordinate[0];
 					var i = coordinate[1];
-					setStateForCell(cells[j][i], 0);
+					setStateForCell(cells[j][i], 0, false);
 				}
 			}
 			return {
@@ -311,23 +317,23 @@ function Grid(Game,
 			}
 			return true;
 		},
-		addRandom(state) {
+		addRandom(state, setStyle = true) {
 			var count = getCount(0);
 			var c = 0;
 			var targetC = Math.floor(Math.random()*count);
-			console.log("addRandom", count, targetC);
 			for (var j = 0; j < rowCount; j++) {
 				for (var i = 0; i < colCount; i++) {
 					var cell = cells[j][i];
 					if (cell.state == 0) {
 						if (c == targetC) {
-							setStateForCell(cell, state);
-							return;
+							setStateForCell(cell, state, setStyle);
+							return cell;
 						}
 						c += 1;
 					}
 				}
 			}
+			return null;
 		},
 		getCell(j, i) {
 			if (i < 0
@@ -340,25 +346,24 @@ function Grid(Game,
 		},
 		setStateStyleCallback(callback) {
 			stateStyleCallback = callback;
+			for (var j = 0; j < rowCount; j++) {
+				for (var i = 0; i < colCount; i++) {
+					setStateForCell(cells[j][i], cells[j][i].state);
+				}
+			}
 		},
 		initialize(dots) {
 			Game.Dot.transition(dots, data);
-			// for (var c = 0; c < data.length; c++) {
-			// 	console.log("data", c, data[c].position, dots[c].position);
-			// }
-			//console.log("initialize", data.length, dots.length);
 			for (var j = 0; j < rowCount; j++) {
 				for (var i = 0; i < colCount; i++) {
 					var cell = cells[j][i];
 					var offset = 0;
 					if (cell.bgDot) {
 						cell.bgDot = dots[j*colCount + i];
-						//cell.bgDot.visible = false;
 						offset = rowCount*colCount;
 					}
 					var idx = offset + j*colCount + i;
 					cell.dot = dots[idx];
-					//console.log("dot index", offset, idx, dots[idx]);
 				}
 			}
 		}
