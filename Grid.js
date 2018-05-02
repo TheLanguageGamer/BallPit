@@ -279,7 +279,7 @@ function Grid(Game,
 				var newI = i + deltaI;
 				var newState = subgrid.states[key];
 				var newCell = cells[newJ][newI];
-				setStateForCell(newCell, newState, false);
+				setStateForCell(newCell, newState, setStyle);
 				newStates[[newJ, newI]] = newState;
 			}
 			for (var key in subgrid.states) {
@@ -287,7 +287,7 @@ function Grid(Game,
 					var coordinate = JSON.parse("["+key+"]");
 					var j = coordinate[0];
 					var i = coordinate[1];
-					setStateForCell(cells[j][i], 0, false);
+					setStateForCell(cells[j][i], 0, setStyle);
 				}
 			}
 			return {
@@ -343,6 +343,9 @@ function Grid(Game,
 				return null;
 			}
 			return cells[j][i];
+		},
+		debug() {
+			console.log(cells);
 		},
 		setStateStyleCallback(callback) {
 			stateStyleCallback = callback;

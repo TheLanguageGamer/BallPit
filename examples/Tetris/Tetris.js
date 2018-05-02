@@ -115,8 +115,11 @@ var Tetris = function(Game, width, height) {
 		update(delta, dots) {
 			deltaSinceDrop += delta;
 			if (deltaSinceDrop > timeToDrop) {
+				console.log("update dropping", delta);
 				if (grid.canMoveSubgrid(1, 0, piece)) {
 					piece = grid.moveSubgrid(1, 0, piece);
+					console.log("canMoveSubgrid");
+					grid.debug();
 				} else {
 					clearRows();
 					var idx = Math.floor(Math.random()*shapes.length);
