@@ -41,7 +41,7 @@ var Collider = function(width, height) {
 			}
 		},
 		forPosition(dots, position) {
-			for (var i = 0; i < dots.length; i++) {
+			for (var i = dots.length-1; i >= 0; i--) {
 				var dot = dots[i];
 				var delta = vector2(
 					dot.position.x - position.x,

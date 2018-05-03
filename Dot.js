@@ -40,6 +40,7 @@ var Dot = function(Tweener) {
 				radius : radius,
 				color : color,
 				visible : true,
+				alpha : 1.0,
 				velocity : vector2(0, 0),
 				destination : position,
 			};
@@ -89,6 +90,11 @@ var Dot = function(Tweener) {
 					dot, false, 500.0, dot.radius,
 					Tweener.line(dot.position, newPosition),
 				);
+			}
+		},
+		fade : function(dots, alpha) {
+			for (var i = 0; i < dots.length; i++) {
+				dots[i].alpha = alpha;
 			}
 		},
 		rotate : function(dots) {

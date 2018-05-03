@@ -300,7 +300,7 @@ var FlappyWorm = function(Tweener, Physics, Renderer, Dot, width, height) {
 				letters[i] = dots[i+3+groundCount];
 			}
 		},
-		input(keyDowns, dots) {
+		input(keyDowns, clicked, dots) {
 			for (var key in keyDowns) {
 				var code = keyDowns[key].code;
 				if (code == "Space") {

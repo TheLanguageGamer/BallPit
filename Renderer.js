@@ -2,6 +2,7 @@
 
 function drawDot(ctx, dot) {
 	if (dot.visible) {
+		ctx.globalAlpha = dot.alpha;
 		ctx.beginPath();
 		ctx.arc(dot.position.x, dot.position.y, dot.radius, 0, 2*Math.PI, false);
 		ctx.fillStyle = dot.color.style;
@@ -12,6 +13,10 @@ function drawDot(ctx, dot) {
 			var size = dot.radius*1.6/l;
 			var x = dot.position.x-dot.radius*0.5;
 			var y = dot.position.y+dot.radius*(1.0/(2*l));
+			if (dot.letterOffset) {
+				x += dot.letterOffset.x;
+				y += dot.letterOffset.y;
+			}
 			ctx.font = Math.round(size)+"px monospace";
 			ctx.fillStyle = Color.BLACK.style;
 			ctx.fillText(dot.letter, x, y);

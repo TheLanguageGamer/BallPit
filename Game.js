@@ -1,21 +1,84 @@
+var MouseInput = {
+	MouseClicked : "MouseClicked",
+	MouseOver : "MouseOver",
+	MouseOut : "MouseOut",
+};
+
 var Game = function(width, height) {
 
 	var FPSCounter = window.FPSCounter();
 	var Renderer = window.Renderer();
 	var Tweener = window.Tweener();
 	var Physics = window.Physics(width, height);
+	var Collider = window.Collider(width, height);
 	var Dot = window.Dot(Tweener);
-
-	var keyDowns = {};
-	document.addEventListener("keydown", function(e) {
-		keyDowns[e.key] = e;
-	}, false);
 
 	var state = null;
 
 	var paused = false;
 
 	var dots = [];
+
+	var keyDowns = {};
+	document.addEventListener("keydown", function(e) {
+		keyDowns[e.key] = e;
+	}, false);
+
+	var clicked = null;
+	var mouseMove = null;
+	var mouseOver = null;
+	var mouseOut = null;
+	var mouseEvents = [];
+	var canvas = Renderer.getCanvas();
+	function getDotForMouseEvent(e) {
+		//console.log("Click:", e.screenX, e.screenY, e.clientX, e.clientY);
+		var position = vector2(
+			e.pageX - canvas.offsetLeft,
+			e.pageY - canvas.offsetTop
+		);
+		return Collider.forPosition(dots, position);
+	}
+	canvas.addEventListener("click", function(e) {
+		var dot = getDotForMouseEvent(e);
+		//console.log("clicked:", clicked);
+		if (dot) {
+			mouseEvents.push({
+				dot : dot,
+				type : MouseInput.MouseClicked,
+			});
+		}
+	});
+	canvas.addEventListener("mousemove", function(e) {
+		var dot = getDotForMouseEvent(e);
+		if (mouseMove != dot) {
+			if (mouseMove) {
+				//mouseOut = mouseMove;
+				mouseEvents.push({
+					dot : mouseMove,
+					type : MouseInput.MouseOut,
+				});
+			}
+			if (dot) {
+				//mouseOver = dot;
+				mouseEvents.push({
+					dot : dot,
+					type : MouseInput.MouseOver,
+				});
+			}
+		}
+		mouseMove = dot;
+		//console.log("mousemove:", dot);
+	});
+	canvas.addEventListener("mouseout", function(e) {
+		console.log("mouseout");
+		if (mouseMove != null) {
+			mouseEvents.push({
+				dot : mouseMove,
+				type : MouseInput.MouseOut,
+			});
+			mouseMove = null;
+		}
+	});
 
 	var last = 0;
 	function update(now) {
@@ -24,8 +87,9 @@ var Game = function(width, height) {
 			last = now;
 			FPSCounter.update(delta);
 
-			state.input(keyDowns, dots);
+			state.input(keyDowns, mouseEvents, dots);
 			keyDowns = {};
+			mouseEvents = [];
 
 			state.update(delta, dots);
 

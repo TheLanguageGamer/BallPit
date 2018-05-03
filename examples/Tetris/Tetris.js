@@ -81,6 +81,16 @@ var Tetris = function(Game, width, height) {
 		onRowsCleared(count);
 	}
 
+	function addPiece() {
+		var idx = Math.floor(Math.random()*shapes.length);
+		var shape = shapes[idx];
+		if (!grid.canAddSubgrid(0, 4, shape)) {
+			console.log("you dead");
+			Game.setGameOver();
+		}
+		piece = grid.addSubgrid(0, 4, shape);
+	}
+
 	return {
 		initialize(dots) {
 			//Game.Dot.transition(dots, data);
@@ -115,19 +125,22 @@ var Tetris = function(Game, width, height) {
 		update(delta, dots) {
 			deltaSinceDrop += delta;
 			if (deltaSinceDrop > timeToDrop) {
-				console.log("update dropping", delta);
 				if (grid.canMoveSubgrid(1, 0, piece)) {
 					piece = grid.moveSubgrid(1, 0, piece);
-					console.log("canMoveSubgrid");
-					grid.debug();
 				} else {
 					clearRows();
-					var idx = Math.floor(Math.random()*shapes.length);
-					var shape = shapes[idx];
-					piece = grid.addSubgrid(0, 4, shape);
+					addPiece();
 				}
 				deltaSinceDrop = 0.0;
 			}
+		},
+		reset() {
+			var duration = 500;
+			grid.clear();
+			grid.restorePositions(duration);
+			setTimeout(function(){
+				//addPiece();
+			}, duration);
 		},
 	};
 }

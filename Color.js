@@ -6,7 +6,7 @@ var Color = (function() {
 			green : green,
 			blue : blue,
 			alpha : alpha,
-			style : "rgb("+red+", "+green+", "+blue+")",
+			style : "rgba("+red+", "+green+", "+blue+")",
 		};
 	}
 

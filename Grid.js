@@ -157,6 +157,14 @@ function Grid(Game,
 				}
 			}
 		},
+		clear() {
+			for (var j = 0; j < rowCount; j++) {
+				for (var i = 0; i < colCount; i++) {
+					var cell = cells[j][i];
+					setStateForCell(cell, 0);
+				}
+			}
+		},
 		transform(fromShape, toShape) {
 			for (var j = 0; j < rowCount; j++) {
 				for (var i = 0; i < colCount; i++) {
@@ -167,14 +175,28 @@ function Grid(Game,
 				}
 			}
 		},
+		restorePositions(duration) {
+			for (var j = 0; j < rowCount; j++) {
+				for (var i = 0; i < colCount; i++) {
+					var dot = cells[j][i].dot;
+					dot.tween = Game.Tweener.create(
+						dot,
+						false,
+						duration,
+						dot.radius,
+						Game.Tweener.line(dot.position, positionForCoordinate(i, j)),
+					);
+				}
+			}
+		},
 		addSubgrid(j0, i0, cellStates) {
 			var subgrid = {};
 			for (var j = 0; j < cellStates.length; j++) {
 				for (var i = 0; i < cellStates[0].length; i++) {
 					var state = cellStates[j][i];
 					var cell = cells[j+j0][i+i0];
-					setStateForCell(cell, state);
 					if (state > 0) {
+						setStateForCell(cell, state);
 						subgrid[[j+j0, i+i0]] = state;
 					}
 				}
@@ -185,6 +207,18 @@ function Grid(Game,
 				size : Math.max(cellStates.length, cellStates[0].length),
 				states : subgrid,
 			};
+		},
+		canAddSubgrid(j0, i0, cellStates) {
+			for (var j = 0; j < cellStates.length; j++) {
+				for (var i = 0; i < cellStates.length; i++) {
+					var state = cellStates[j][i];
+					var cell = cells[j+j0][i+i0];
+					if (state != 0 && cell.state != 0) {
+						return false;
+					}
+				}
+			}
+			return true;
 		},
 		getSubgrid(j0, i0, width, height) {
 			var subgrid = {};
