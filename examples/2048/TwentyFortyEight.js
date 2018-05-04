@@ -3,8 +3,9 @@ var TwentyFortyEight = function(game, width, height) {
 	var ROW_COUNT = 4;
 	var COL_COUNT = 4;
 
-	var grid = window.Grid(
-		game, 4, 4, width, height, vector2(0, 0));
+	var layout = window.NormalGridLayout(
+		4, 4, width, height, vector2(0, 0));
+	var grid = window.Grid(game, layout);
 	grid.addBackground();
 
 	function styleCallback(cell, newState) {
@@ -152,13 +153,14 @@ var TwentyFortyEight = function(game, width, height) {
 			for (var key in keyDowns) {
 				var code = keyDowns[key].code;
 				var movement = false;
-				if (code == "ArrowLeft") {
+				console.log("Code:", code);
+				if (code == "ArrowLeft" || code == "KeyA") {
 					movement = moveLeft() || movement;
-				} else if (code == "ArrowRight") {
+				} else if (code == "ArrowRight" || code == "KeyD") {
 					movement = moveRight() || movement;
-				} else if (code == "ArrowDown") {
+				} else if (code == "ArrowDown" || code == "KeyS") {
 					movement = moveDown() || movement;
-				} else if (code == "ArrowUp") {
+				} else if (code == "ArrowUp" || code == "KeyW") {
 					movement = moveUp() || movement;
 				}
 				if (movement) {

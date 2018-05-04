@@ -1,11 +1,76 @@
-function Grid(Game,
+function SquishedGridLayout(
 	rowCount,
 	colCount,
 	maxWidth,
 	maxHeight,
 	upperLeft) {
 
-	var colorCombination = Color.Combination.LoveThese;
+	var x = 0.8;
+
+	var maxCellWidth = maxWidth/(colCount+0.5);
+	var maxCellHeight = maxHeight/(rowCount*x);
+
+	console.log("SquishedGridLayout", maxCellWidth, maxCellHeight);
+	
+	// maxCellWidth = Math.min(
+	// 	maxCellWidth,
+	// 	maxCellHeight*(1.0/x),
+	// );
+
+	// maxCellHeight = Math.min(
+	// 	maxCellHeight,
+	// 	maxCellWidth*x,
+	// );
+
+	console.log(maxCellWidth, maxCellHeight);
+
+	// var maxCellSize = Math.min(
+	// 	maxHeight/rowCount,
+	// 	maxWidth/colCount
+	// );
+
+	var width = maxCellWidth*colCount;
+	var height = maxCellHeight*rowCount;
+	upperLeft = vector2(
+		upperLeft.x + (maxWidth-width)/2.0,
+		upperLeft.y + (maxHeight-height)/2.0,
+	);
+
+	console.log(width, height);
+
+	var cellWidth = Math.min(
+		height/rowCount,
+		width/colCount,
+	);
+	var margin = 0.1*cellWidth
+	var radius = (cellWidth-margin) / 2.0;
+
+	function positionForCoordinate(i, j) {
+		var offset = j%2 == 1 ? cellWidth/2.0 : 0.0;
+		return vector2(
+			cellWidth*i + radius + upperLeft.x + offset,
+			x*cellWidth*j + radius + upperLeft.y,
+		);
+	}
+
+	return {
+		positionForCoordinate : positionForCoordinate,
+		coordinateForPosition : null,
+		radius : radius,
+		rowCount : rowCount,
+		colCount : colCount,
+		margin : margin,
+		cellSize : cellWidth,
+	};
+}
+
+function NormalGridLayout(
+	rowCount,
+	colCount,
+	maxWidth,
+	maxHeight,
+	upperLeft) {
+
 	var maxCellSize = Math.min(
 		maxHeight/rowCount,
 		maxWidth/colCount,
@@ -40,6 +105,30 @@ function Grid(Game,
 		};
 	}
 
+	return {
+		positionForCoordinate : positionForCoordinate,
+		coordinateForPosition : coordinateForPosition,
+		radius : radius,
+		rowCount : rowCount,
+		colCount : colCount,
+		margin : margin,
+		cellSize : cellSize,
+	};
+}
+
+function Grid(Game, layout) {
+
+	var radius = layout.radius;
+	var rowCount = layout.rowCount;
+	var colCount = layout.colCount;
+	var positionForCoordinate = layout.positionForCoordinate;
+	var coordinateForPosition = layout.coordinateForPosition;
+	var margin = layout.margin;
+	var cellSize = layout.cellSize;
+
+
+	var colorCombination = Color.Combination.LoveThese;
+
 	var cells = [];
 	var data = [];
 	for (var j = 0; j < rowCount; j++) {
@@ -49,7 +138,7 @@ function Grid(Game,
 			var position = positionForCoordinate(i, j);
 			var dot = Game.Dot.create(
 				position,
-				radius,
+				layout.radius,
 				colorCombination[0],
 			);
 			var cell = {

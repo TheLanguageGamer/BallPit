@@ -7,8 +7,9 @@ var Tetris = function(Game, width, height) {
 	var timeToDrop = START_TIME_TO_DROP;
 	var deltaSinceDrop = 0;
 
-	var grid = window.Grid(
-		Game, ROW_COUNT, COL_COUNT, width, height, vector2(0, 0));
+	var layout = window.NormalGridLayout(
+		ROW_COUNT, COL_COUNT, width, height, vector2(0, 0));
+	var grid = window.Grid(Game, layout);
 	
 	var gui = window.TetrisGUI();
 
@@ -48,6 +49,16 @@ var Tetris = function(Game, width, height) {
 	var lines = 0;
 	var score = 0;
 	var level = 1;
+
+	function resetScores() {
+		lines = 0;
+		score = 0;
+		level = 1;
+
+		gui.setLevel(level);
+		gui.setLines(lines);
+		gui.setScore(score);
+	}
 
 	function onRowsCleared(count) {
 		lines += count;
@@ -99,19 +110,19 @@ var Tetris = function(Game, width, height) {
 		input(keyDowns, dots) {
 			for (var key in keyDowns) {
 				var code = keyDowns[key].code;
-				if (code == "ArrowLeft") {
+				if (code == "ArrowLeft" || code == "KeyA") {
 					if (grid.canMoveSubgrid(0, -1, piece)) {
 						piece = grid.moveSubgrid(0, -1, piece);
 					}
-				} else if (code == "ArrowRight") {
+				} else if (code == "ArrowRight" || code == "KeyD") {
 					if (grid.canMoveSubgrid(0, 1, piece)) {
 						piece = grid.moveSubgrid(0, 1, piece);
 					}
-				} else if (code == "ArrowDown") {
+				} else if (code == "ArrowDown" || code == "KeyS") {
 					if (grid.canMoveSubgrid(1, 0, piece)) {
 						piece = grid.moveSubgrid(1, 0, piece);
 					}
-				} else if (code == "ArrowUp") {
+				} else if (code == "ArrowUp" || code == "KeyW") {
 					if (grid.canRotateSubgrid(piece)) {
 						piece = grid.rotateSubgrid(piece);
 					}
@@ -138,6 +149,8 @@ var Tetris = function(Game, width, height) {
 			var duration = 500;
 			grid.clear();
 			grid.restorePositions(duration);
+			resetScores();
+			timeToDrop = START_TIME_TO_DROP;
 			setTimeout(function(){
 				//addPiece();
 			}, duration);

@@ -31,7 +31,6 @@ var Game = function(width, height) {
 	var mouseEvents = [];
 	var canvas = Renderer.getCanvas();
 	function getDotForMouseEvent(e) {
-		//console.log("Click:", e.screenX, e.screenY, e.clientX, e.clientY);
 		var position = vector2(
 			e.pageX - canvas.offsetLeft,
 			e.pageY - canvas.offsetTop
@@ -40,7 +39,6 @@ var Game = function(width, height) {
 	}
 	canvas.addEventListener("click", function(e) {
 		var dot = getDotForMouseEvent(e);
-		//console.log("clicked:", clicked);
 		if (dot) {
 			mouseEvents.push({
 				dot : dot,
@@ -52,14 +50,12 @@ var Game = function(width, height) {
 		var dot = getDotForMouseEvent(e);
 		if (mouseMove != dot) {
 			if (mouseMove) {
-				//mouseOut = mouseMove;
 				mouseEvents.push({
 					dot : mouseMove,
 					type : MouseInput.MouseOut,
 				});
 			}
 			if (dot) {
-				//mouseOver = dot;
 				mouseEvents.push({
 					dot : dot,
 					type : MouseInput.MouseOver,
@@ -67,10 +63,8 @@ var Game = function(width, height) {
 			}
 		}
 		mouseMove = dot;
-		//console.log("mousemove:", dot);
 	});
 	canvas.addEventListener("mouseout", function(e) {
-		console.log("mouseout");
 		if (mouseMove != null) {
 			mouseEvents.push({
 				dot : mouseMove,

@@ -133,7 +133,6 @@ var FSMWrapper = function(game, width, height) {
 			}
 			for (var i = 0; i < mouseEvents.length; i++) {
 				var event = mouseEvents[i];
-				console.log("Mouse event: ", event.type, event.dot);
 				if (playButton.is(event.dot)) {
 					playButton.processMouseEvent(event);
 					if (event.type == MouseInput.MouseClicked) {
