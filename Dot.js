@@ -98,7 +98,6 @@ var Dot = function(Tweener) {
 			}
 		},
 		rotate : function(dots) {
-			console.log("rotate");
 			var bounding = boundingRect(dots);
 			var width = bounding.max.x - bounding.min.x;
 			var height = bounding.max.y - bounding.min.y;

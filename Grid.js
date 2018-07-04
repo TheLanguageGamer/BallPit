@@ -5,32 +5,18 @@ function SquishedGridLayout(
 	maxHeight,
 	upperLeft) {
 
-	var x = 0.8;
+	var SQUISH = 0.8;
 
-	var maxCellWidth = maxWidth/(colCount+0.5);
-	var maxCellHeight = maxHeight/(rowCount*x);
+	var heightDrivenCellSize = maxHeight/(rowCount*SQUISH);
+	var widthDrivenCellSize = maxWidth/(colCount+0.5);
 
-	console.log("SquishedGridLayout", maxCellWidth, maxCellHeight);
-	
-	// maxCellWidth = Math.min(
-	// 	maxCellWidth,
-	// 	maxCellHeight*(1.0/x),
-	// );
+	var cellSize = Math.min(
+		heightDrivenCellSize,
+		widthDrivenCellSize
+	);
 
-	// maxCellHeight = Math.min(
-	// 	maxCellHeight,
-	// 	maxCellWidth*x,
-	// );
-
-	console.log(maxCellWidth, maxCellHeight);
-
-	// var maxCellSize = Math.min(
-	// 	maxHeight/rowCount,
-	// 	maxWidth/colCount
-	// );
-
-	var width = maxCellWidth*colCount;
-	var height = maxCellHeight*rowCount;
+	var width = cellSize*(colCount+0.5);
+	var height = cellSize*rowCount*SQUISH;
 	upperLeft = vector2(
 		upperLeft.x + (maxWidth-width)/2.0,
 		upperLeft.y + (maxHeight-height)/2.0,
@@ -38,29 +24,38 @@ function SquishedGridLayout(
 
 	console.log(width, height);
 
-	var cellWidth = Math.min(
-		height/rowCount,
-		width/colCount,
-	);
-	var margin = 0.1*cellWidth
-	var radius = (cellWidth-margin) / 2.0;
+	var margin = 0.1*cellSize
+	var radius = (cellSize-margin) / 2.0;
 
 	function positionForCoordinate(i, j) {
-		var offset = j%2 == 1 ? cellWidth/2.0 : 0.0;
+		var offset = j%2 == 1 ? cellSize/2.0 : 0.0;
 		return vector2(
-			cellWidth*i + radius + upperLeft.x + offset,
-			x*cellWidth*j + radius + upperLeft.y,
+			cellSize*i + radius + upperLeft.x + offset,
+			SQUISH*cellSize*j + radius + upperLeft.y,
 		);
+	}
+
+	function coordinateForPosition(position) {
+		var j = (position.y - radius - upperLeft.y)/(cellSize*SQUISH);
+		var offset = j%2 == 1 ? cellSize/2.0 : 0.0;
+		var i = (position.x - radius - upperLeft.x - offset)/cellSize;
+		return {
+			i : Math.round(i),
+			j : Math.round(j),
+		};
 	}
 
 	return {
 		positionForCoordinate : positionForCoordinate,
-		coordinateForPosition : null,
+		coordinateForPosition : coordinateForPosition,
 		radius : radius,
 		rowCount : rowCount,
 		colCount : colCount,
 		margin : margin,
-		cellSize : cellWidth,
+		cellSize : cellSize,
+		width : width,
+		height : height,
+		upperLeft : upperLeft,
 	};
 }
 
@@ -86,6 +81,7 @@ function NormalGridLayout(
 		height/rowCount,
 		width/colCount,
 	);
+	console.log("NormalGridLayout", cellSize, maxCellSize);
 	var margin = 0.1*cellSize
 	var radius = (cellSize-margin) / 2.0;
 
@@ -113,6 +109,9 @@ function NormalGridLayout(
 		colCount : colCount,
 		margin : margin,
 		cellSize : cellSize,
+		width : width,
+		height : height,
+		upperLeft : upperLeft,
 	};
 }
 
@@ -245,6 +244,9 @@ function Grid(Game, layout) {
 					setStateForCell(cell, cellStates[j][i]);
 				}
 			}
+		},
+		setCell(j, i, state) {
+			setStateForCell(cells[j][i], state);
 		},
 		clear() {
 			for (var j = 0; j < rowCount; j++) {

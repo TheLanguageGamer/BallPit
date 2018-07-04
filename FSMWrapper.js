@@ -113,6 +113,8 @@ var FSMWrapper = function(game, width, height) {
 		Tweener : game.Tweener,
 		Physics : game.Physics,
 		Dot : game.Dot,
+		ShapeMaker : game.ShapeMaker,
+		Collider : game.Collider,
 		setModule(m) {
 			module = m;
 		},

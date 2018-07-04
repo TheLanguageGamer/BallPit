@@ -52,8 +52,43 @@ var Collider = function(width, height) {
 					return dot;
 				}
 			}
-
 			return null;
+		},
+		forDots(dots, otherDot, filter = null) {
+			for (var i = dots.length-1; i >= 0; i--) {
+				var dot = dots[i];
+				if (filter && !filter(dot)) {
+					continue;
+				}
+				var delta = vector2(
+					dot.position.x - otherDot.position.x,
+					dot.position.y - otherDot.position.y,
+				);
+				var distance = Math.sqrt(delta.x*delta.x+delta.y*delta.y);
+				if (distance <= dot.radius + otherDot.radius) {
+					return dot;
+				}
+			}
+			return null;
+		},
+		closest(dots, otherDot) {
+			var closest = null
+			var closestDistance = 0;
+			for (var i = dots.length-1; i >= 0; i--) {
+				var dot = dots[i];
+				var delta = vector2(
+					dot.position.x - otherDot.position.x,
+					dot.position.y - otherDot.position.y
+				);
+				var distance = Math.sqrt(delta.x*delta.x+delta.y*delta.y);
+				console.log("Distance:", distance);
+				if (distance <= closestDistance
+					|| closest == null) {
+					closest = dot;
+					closestDistance = distance;
+				}
+			}
+			return closest;
 		},
 	};
 };

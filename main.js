@@ -38,7 +38,7 @@ window.onload = function() {
 		last = now;
 		FPSCounter.update(delta);
 
-		State.input(keyDowns, dots);
+		State.input(keyDowns, null, dots);
 		keyDowns = {};
 
 		State.update(delta, dots);

@@ -13,6 +13,11 @@ var Physics = function(width, height) {
 	var absoluteMin = vector2(0, 0);
 	var absoluteMax = vector2(width, height);
 
+	var left = 0;
+	var right = width;
+	var top = 0;
+	var bottom = height;
+
 	function updatePosition(dot, delta) {
 		var position = dot.position;
 		velocity = dot.velocity;
@@ -30,20 +35,20 @@ var Physics = function(width, height) {
 	}
 
 	function collideWithWalls(dot) {
-		if (dot.position.x - dot.radius < 0 
+		if (dot.position.x - dot.radius < left 
 			&& dot.velocity.x < 0) {
 			console.log("collideWithWalls");
 			dot.velocity = vector2(-dot.velocity.x, dot.velocity.y);
 		}
-		if (dot.position.x + dot.radius > width
+		if (dot.position.x + dot.radius > right
 			&& dot.velocity.x > 0) {
 			dot.velocity = vector2(-dot.velocity.x, dot.velocity.y);
 		}
-		if (dot.position.y - dot.radius < 0 
+		if (dot.position.y - dot.radius < top
 			&& dot.velocity.y < 0) {
 			dot.velocity = vector2(dot.velocity.x, -dot.velocity.y);
 		}
-		if (dot.position.y + dot.radius > height 
+		if (dot.position.y + dot.radius > bottom 
 			&& dot.velocity.y > 0) {
 			dot.velocity = vector2(dot.velocity.x*dampening.x, -dot.velocity.y*dampening.y);
 		}
@@ -80,6 +85,12 @@ var Physics = function(width, height) {
 		setEnabled(value) { enabled = value; },
 		setGravity(value) { gravity = value; },
 		setDampening(value) { dampening = value; },
+		setWalls(l, r, t, b) {
+			left = l;
+			right = r;
+			top = t;
+			bottom = b;
+		},
 		updatePosition : updatePosition,
 		updateVelocity : updateVelocity,
 	};

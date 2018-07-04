@@ -67,9 +67,9 @@ var State = function(Tweener, Physics, Dot) {
 
 	return {
 		fromData : fromData,
-		input(keyDowns, dots) {
+		input(keyDowns, clicked, dots) {
 			if (current && current.input) {
-				current.input(keyDowns, dots);
+				current.input(keyDowns, clicked, dots);
 			}
 		},
 		update(delta, dots) {
