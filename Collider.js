@@ -43,13 +43,15 @@ var Collider = function(width, height) {
 		forPosition(dots, position) {
 			for (var i = dots.length-1; i >= 0; i--) {
 				var dot = dots[i];
-				var delta = vector2(
-					dot.position.x - position.x,
-					dot.position.y - position.y
-				);
-				var distance = Math.sqrt(delta.x*delta.x+delta.y*delta.y);
-				if (distance <= dot.radius) {
-					return dot;
+				if (dot.type == Shape.CIRCLE) {
+					var delta = vector2(
+						dot.position.x - position.x,
+						dot.position.y - position.y
+					);
+					var distance = Math.sqrt(delta.x*delta.x+delta.y*delta.y);
+					if (distance <= dot.radius) {
+						return dot;
+					}
 				}
 			}
 			return null;

@@ -12,6 +12,7 @@ var Game = function(width, height) {
 	var Physics = window.Physics(width, height);
 	var Collider = window.Collider(width, height);
 	var Dot = window.Dot(Tweener);
+	var Path = window.Path();
 	var ShapeMaker = window.ShapeMaker(Dot);
 
 	var state = null;
@@ -83,6 +84,7 @@ var Game = function(width, height) {
 			FPSCounter.update(delta);
 
 			Tweener.update(delta, dots);
+			Path.update(delta, dots);
 			Physics.update(delta, dots);
 			Renderer.update(delta, dots);
 
@@ -117,6 +119,7 @@ var Game = function(width, height) {
 		Tweener : Tweener,
 		Physics : Physics,
 		Dot : Dot,
+		Path : Path,
 		ShapeMaker : ShapeMaker,
 		Collider : Collider,
 	};

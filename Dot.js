@@ -42,7 +42,7 @@ var Dot = function(Tweener) {
 				visible : true,
 				alpha : 1.0,
 				velocity : vector2(0, 0),
-				destination : position,
+				type : Shape.CIRCLE,
 			};
 		},
 		intersects : function(a, b, buffer = 0.0) {

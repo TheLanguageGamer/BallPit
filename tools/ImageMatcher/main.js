@@ -149,7 +149,7 @@ function processFile(file) {
 		// ctx.fill();
 
 		for (var i = 0; i < dots.length; i++) {
-			drawDot(ctx, dots[i]);
+			drawCircle(ctx, dots[i]);
 		}
 
 		var canvas2 = document.createElement("canvas");
